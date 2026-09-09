@@ -5,10 +5,10 @@ mod plot;
 use crate::{isocahedron::icosahedron, plot::plot_2d};
 
 fn main() {
-    let polyhedron = icosahedron();
+    let polyhedron = icosahedron().dual();
 
-    match plot_2d(&polyhedron, "icosahedron.svg") {
-        Ok(()) => println!("Wrote icosahedron.svg"),
-        Err(error) => eprintln!("Failed to write icosahedron.svg: {error}"),
+    match plot_2d(&polyhedron, "goldberg.svg") {
+        Ok(()) => println!("Wrote goldberg.svg"),
+        Err(error) => eprintln!("Failed to write goldberg.svg: {error}"),
     }
 }

@@ -1,10 +1,7 @@
-use crate::geometry::{
-    find_faces::faces_from_vertices,
-    objects::{Polyhedron, Vec3},
-};
+use crate::geometry::{find_faces::faces_from_vertices, objects::Vec3, polyhedron::Polyhedron};
 
 pub fn icosahedron() -> Polyhedron {
-    let phi = (1.0 + 5.0_f64.sqrt()) / 2.0;
+    let phi = (1.0 + 5.0_f32.sqrt()) / 2.0;
 
     let vertices = vec![
         Vec3::new(0.0, 1.0, phi),

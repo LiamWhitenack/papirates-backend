@@ -1,15 +1,15 @@
 use crate::geometry::objects::{Face, Vec3};
 
 pub fn faces_from_vertices(vertices: &[Vec3]) -> Vec<Face> {
-    const EPSILON: f64 = 1e-10;
+    const EPSILON: f32 = 1e-10;
 
     let mut faces: Vec<Face> = Vec::new();
 
     for a in 0..vertices.len() {
         for b in (a + 1)..vertices.len() {
             for c in (b + 1)..vertices.len() {
-                let ab = vertices[b].sub(vertices[a]);
-                let ac = vertices[c].sub(vertices[a]);
+                let ab = vertices[b] - vertices[a];
+                let ac = vertices[c] - vertices[a];
 
                 let normal = ab.cross(ac);
 
@@ -26,7 +26,7 @@ pub fn faces_from_vertices(vertices: &[Vec3]) -> Vec<Face> {
                         continue;
                     }
 
-                    let distance = normal.dot(vertex.sub(vertices[a]));
+                    let distance = normal.dot(*vertex - vertices[a]);
 
                     if distance > EPSILON {
                         positive = true;
@@ -44,7 +44,7 @@ pub fn faces_from_vertices(vertices: &[Vec3]) -> Vec<Face> {
                 // so this triangle is a face of the convex hull.
                 if !(positive && negative) {
                     faces.push(Face {
-                        vertices: vec![a, b, c],
+                        vertices: vec![vertices[a], vertices[b], vertices[c]],
                     });
                 }
             }
