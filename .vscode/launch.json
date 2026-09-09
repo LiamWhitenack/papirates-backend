@@ -17,18 +17,6 @@
             "args": []
         },
         {
-            "name": "Debug executable 'papirates-backend'",
-            "type": "lldb",
-            "request": "launch",
-            "cargo": {
-                "args": [
-                    "run",
-                    "--bin=papirates-backend"
-                ]
-            },
-            "args": []
-        },
-        {
             "name": "Debug unit tests in executable 'papirates-backend'",
             "type": "lldb",
             "request": "launch",
