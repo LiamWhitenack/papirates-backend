@@ -1,14 +1,15 @@
 mod geometry;
-mod isocahedron;
-mod plot;
+mod icosahedron;
 
-use crate::{isocahedron::icosahedron, plot::plot_2d};
+use crate::icosahedron::icosahedron;
 
 fn main() {
-    let polyhedron = icosahedron().dual();
-
-    match plot_2d(&polyhedron, "goldberg.svg") {
-        Ok(()) => println!("Wrote goldberg.svg"),
-        Err(error) => eprintln!("Failed to write goldberg.svg: {error}"),
+    match icosahedron().plot("icosahedron.svg") {
+        Ok(()) => println!("Wrote icosahedron.svg"),
+        Err(error) => eprintln!("Failed to write icosahedron.svg: {error}"),
+    }
+    match icosahedron().dual().plot("dodecahedron.svg") {
+        Ok(()) => println!("Wrote dodecahedron.svg"),
+        Err(error) => eprintln!("Failed to write dodecahedron.svg: {error}"),
     }
 }
