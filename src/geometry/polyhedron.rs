@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use glam::Vec3;
 use plotters::{
     backend::SVGBackend,
@@ -22,18 +24,88 @@ impl Polyhedron {
         face.iter().map(|&index| self.vertices[index]).sum::<Vec3>() / face.len() as f32
     }
 
-    pub fn dual(&self) -> Polyhedron {
-        let faces = (0..self.vertices.len())
-            .map(|vertex| {
-                self.faces
+    pub fn topology(&self) -> HashMap<usize, Vec<usize>> {
+        self.faces
+            .iter()
+            .enumerate()
+            .map(|(i, face)| {
+                let neighbors = self
+                    .faces
                     .iter()
                     .enumerate()
-                    .filter_map(|(face_index, face)| face.contains(&vertex).then_some(face_index))
-                    .collect()
-            })
-            .collect();
+                    .filter_map(|(j, other)| {
+                        (i != j && face.iter().filter(|v| other.contains(v)).count() == 2)
+                            .then_some(j)
+                    })
+                    .collect();
 
-        let vertices = self.faces.iter().map(|face| self.centroid(face)).collect();
+                (i, neighbors)
+            })
+            .collect()
+    }
+
+    pub fn dual(&self) -> Polyhedron {
+        let topology = self.topology();
+
+        let faces = (0..self.vertices.len())
+            .map(|vertex| {
+                let incident = self
+                    .faces
+                    .iter()
+                    .enumerate()
+                    .filter_map(|(i, face)| face.contains(&vertex).then_some(i))
+                    .collect::<Vec<_>>();
+
+                assert!(
+                    incident.len() >= 3,
+                    "vertex {vertex} belongs to only {} faces: {incident:?}",
+                    incident.len()
+                );
+
+                let start = incident[0];
+
+                let mut ordered = vec![start];
+                let mut previous = None;
+                let mut current = start;
+
+                loop {
+                    let next = topology[&current]
+                        .iter()
+                        .copied()
+                        .filter(|&neighbor| {
+                            incident.contains(&neighbor) && Some(neighbor) != previous
+                        })
+                        .next();
+
+                    let Some(next) = next else {
+                        break;
+                    };
+
+                    if next == start {
+                        break;
+                    }
+
+                    ordered.push(next);
+                    previous = Some(current);
+                    current = next;
+                }
+
+                assert_eq!(
+                    ordered.len(),
+                    incident.len(),
+                    "could not order all faces around vertex {vertex}: \
+                 ordered {ordered:?}, incident {incident:?}"
+                );
+
+                ordered
+            })
+            .collect::<Vec<_>>();
+
+        let vertices = self
+            .faces
+            .iter()
+            .map(|face| self.centroid(face))
+            .collect::<Vec<_>>();
 
         Polyhedron::new(vertices, faces)
     }

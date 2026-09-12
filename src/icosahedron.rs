@@ -38,7 +38,6 @@ pub fn icosahedron() -> Polyhedron {
         vec![3, 7, 6],
         vec![3, 6, 9],
         vec![4, 9, 8],
-        // vec![5, 4, 11],
         vec![10, 5, 11],
         vec![10, 11, 7],
         vec![8, 6, 9],
